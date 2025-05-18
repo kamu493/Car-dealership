@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mortu Motors - Home</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: white;
+      color: #333;
+    }
+    header {
+      background-color: darkred;
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav {
+      background-color: gray;
+      display: flex;
+      justify-content: center;
+      padding: 10px;
+    }
+    nav h2 {
+      color: white;
+    }
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      padding: 15px;
+      background-color: #eee;
+    }
+    .search-bar input {
+      width: 300px;
+      padding: 10px;
+    }
+    .search-bar button {
+      padding: 10px;
+      background-color: darkred;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    section {
+      padding: 40px;
+      border-bottom: 1px solid #ccc;
+    }
+    .car-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .car-card {
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      padding: 15px;
+      text-align: center;
+    }
+    .slider-container {
+      position: relative;
+      margin-top: 20px;
+    }
+    .car-slider {
+      display: flex;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      gap: 20px;
+      padding: 20px 0;
+    }
+    .car-card-slide {
+      min-width: 250px;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      padding: 15px;
+      text-align: center;
+      flex-shrink: 0;
+      border-radius: 10px;
+      height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .car-card-slide img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .scroll-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: darkred;
+      color: white;
+      border: none;
+      font-size: 24px;
+      padding: 10px 15px;
+      cursor: pointer;
+      z-index: 1;
+      border-radius: 5px;
+    }
+    .scroll-btn.left {
+      left: 0;
+    }
+    .scroll-btn.right {
+      right: 0;
+    }
+    .brand-buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .brand-buttons button {
+      background-color: white;
+      color: #333;
+      border: 2px solid darkred;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .brand-buttons button:hover {
+      background-color: darkred;
+      color: white;
+    }
+    footer {
+      background-color: #333;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    footer a {
+      margin: 0 10px;
+      color: lightgray;
+      text-decoration: none;
+    }
+    /* Optional: Add some style for the gallery grid images */
+    .gallery-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .gallery-grid img {
+      width: 200px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Mortu Motors</h1>
+  </header>
+
+  <nav>
+    <h2>Pre Owned Cars</h2>
+  </nav>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search for cars..." />
+    <button onclick="searchCars()">Search</button>
+  </div>
+
+  <section>
+    <h2>Browse Used Cars by Brand</h2>
+    <div class="brand-buttons">
+      <button onclick="filterByBrand('Toyota')">Toyota</button>
+      <button onclick="filterByBrand('BMW')">BMW</button>
+      <button onclick="filterByBrand('Ford')">Ford</button>
+      <button onclick="filterByBrand('Mercedes')">Mercedes</button>
+    </div>
+  </section>
+
+  <section id="brandResultsSection" style="display: none;">
+    <h2 id="brandTitle">Cars by Brand</h2>
+    <div class="car-grid" id="brandResultsGrid">
+      <!-- JavaScript will inject car cards here -->
+    </div>
+  </section>
+
+  <div class="gallery-grid" id="gallery-grid"></div>
+
+  <section>
+    <h2>Latest Arrivals</h2>
+    <div class="slider-container">
+      <button class="scroll-btn left" onclick="scrollSlider(-1)">‹</button>
+      <div class="car-slider" id="carSlider">
+        <!-- Slides will be injected here -->
+      </div>
+      <button class="scroll-btn right" onclick="scrollSlider(1)">›</button>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Mortu Motors</p>
+    <a href="#">Facebook</a>
+    <a href="#">Instagram</a>
+    <a href="#">Twitter</a>
+  </footer>
+
+  <script>
+    const carData = [
+      { brand: "Toyota", model: "Corolla", year: 2019, price: "R180,000", description: "Fuel efficient, automatic" },
+      { brand: "Toyota", model: "Hilux", year: 2021, price: "R320,000", description: "4x4, double cab" },
+      { brand: "BMW", model: "X5", year: 2020, price: "R500,000", description: "Luxury SUV, panoramic roof" },
+      { brand: "BMW", model: "3 Series", year: 2018, price: "R270,000", description: "Sporty and comfortable" },
+      { brand: "Ford", model: "Ranger", year: 2019, price: "R290,000", description: "Diesel, tough bakkie" },
+      { brand: "Ford", model: "Fiesta", year: 2017, price: "R120,000", description: "Compact and efficient" },
+      { brand: "Mercedes", model: "C-Class", year: 2019, price: "R350,000", description: "Smooth drive, automatic" },
+      { brand: "Mercedes", model: "GLE", year: 2021, price: "R680,000", description: "Luxury 7-seater SUV" }
+    ];
+
+    function searchCars() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const cards = document.querySelectorAll(".car-card, .car-card-slide");
+
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(input) ? "block" : "none";
+      });
+    }
+
+    document.getElementById("searchInput").addEventListener("input", searchCars);
+
+    function scrollSlider(direction) {
+      const slider = document.getElementById("carSlider");
+      const scrollAmount = 300 * direction;
+      slider.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    }
+
+    function filterByBrand(brand) {
+      const results = carData.filter(car => car.brand === brand);
+      const container = document.getElementById("brandResultsGrid");
+      const title = document.getElementById("brandTitle");
+      const section = document.getElementById("brandResultsSection");
+
+      container.innerHTML = "";
+      title.textContent = `${brand} Cars`;
+
+      results.forEach(car => {
+        const card = document.createElement("div");
+        card.classList.add("car-card");
+        card.innerHTML = `
+          <h3>${car.model}</h3>
+          <p><strong>Year:</strong> ${car.year}</p>
+          <p><strong>Price:</strong> ${car.price}</p>
+          <p>${car.description}</p>
+        `;
+        container.appendChild(card);
+      });
+
+      section.style.display = "block";
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+
+    async function loadGallery() {
+      try {
+        const response = await fetch('/api/gallery'); // Use relative path if frontend served by backend, else use full backend URL
+        const data = await response.json();
+
+        const grid = document.getElementById('gallery-grid');
+        grid.innerHTML = ''; // Clear existing content
+
+        data.gallery.forEach(imgUrl => {
+          const img = document.createElement('img');
+          img.src = imgUrl;
+          img.alt = 'Car';
+          img.className = 'car-image'; // Style as needed
+          grid.appendChild(img);
+        });
+      } catch (error) {
+        console.error('Failed to load gallery:', error);
+      }
+    }
+
+    async function loadSliderImages() {
+      try {
+        const response = await fetch('/api/gallery'); // Use relative path if frontend served by backend, else use full backend URL
+        const data = await response.json();
+
+        const slider = document.getElementById('carSlider');
+        slider.innerHTML = ''; // Clear existing slides
+
+        // Only show the first 10 images in the slider for "Latest Arrivals"
+        data.gallery.slice(0, 10).forEach((imgUrl, idx) => {
+          const slide = document.createElement('div');
+          slide.className = 'car-card-slide';
+          slide.innerHTML = `
+            <img src="${imgUrl}" alt="Car ${idx + 1}">
+            <h3>Car ${idx + 1}</h3>
+            <p>New Arrival</p>
+          `;
+          slider.appendChild(slide);
+        });
+      } catch (error) {
+        console.error('Failed to load slider images:', error);
+      }
+    }
+
+    // Load both gallery and slider on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      loadGallery();
+      loadSliderImages();
+    });
+  </script>
+</body>
+</html>
